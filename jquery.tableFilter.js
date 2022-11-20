@@ -10,14 +10,21 @@
             autoFocus: false,
             caseSensitive: false,
             noResults: 'no results found',
-            columns: null
+            columns: null,
+            localStoreKey: "tableFilterLD",
         }, options);
         
         //auto focus on filter element if autofocs set to true
         if(settings.autoFocus) {
             $(settings.filterID).focus();
         }
-        
+
+        // clean input data when click
+        $(settings.filterID).click(function(){
+            $(this).val(""); 
+            $(this).trigger('input');
+        });
+
         //get table rows
         var rowCount = $(settings.filterCell).parent().length;
         
@@ -40,9 +47,10 @@
         }
         
         //bind eventListener to filter element
-        return this.find(settings.filterID).on("input", function() {
+        this.find(settings.filterID).on("input", function() {
             //get value of input
             var filterString = $(this).val();
+            localStorage.setItem(settings.localStoreKey, filterString);
 
             if(filterString == ""){
                 $(settings.tableID + " .filter-hidden").removeClass('filter-hidden').show();
@@ -84,5 +92,12 @@
                 $('#noResults').remove();
             } 
         });
+
+        // use local storage to store filter data, for load data when refresh page
+        var stored_filter = localStorage.getItem(settings.localStoreKey);
+        if(stored_filter){
+            $(settings.filterID).val(stored_filter);
+            $(settings.filterID).trigger('input');
+        }
     };
 }(jQuery));
