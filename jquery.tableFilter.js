@@ -9,9 +9,10 @@
             filterCell: '.filter-cell',
             autoFocus: false,
             caseSensitive: false,
+            localStoreKey: "tableFilterLD",
+            useReg: false,
             noResults: 'no results found',
             columns: null,
-            localStoreKey: "tableFilterLD",
         }, options);
         
         //auto focus on filter element if autofocs set to true
@@ -46,6 +47,24 @@
             contains = ':icontains';
         }
         
+        if(settings.useReg){
+            // Use regular expressions for filtering
+            $.expr[':'].reg_contains = $.expr.createPseudo(function(text) {
+                return function(e) {
+                    try{
+                        if(settings.caseSensitive) {
+                            return $(e).text().match(new RegExp(text));
+                        }else{
+                            return $(e).text().match(new RegExp(text, 'i'));
+                        }
+                    }catch(e){
+                        return false;
+                    }
+                };
+            });
+            contains = ':reg_contains';
+        }
+
         //bind eventListener to filter element
         this.find(settings.filterID).on("input", function() {
             //get value of input
