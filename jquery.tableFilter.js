@@ -61,16 +61,23 @@
             }
         
             var g_find_flag = false;
+
             //for each cell compare versus filter input
             $(settings.tableID + " tr").each(function(i){ //pass i as iterator
                 // process td data
                 var find_flag = false;
-                $(settings.filterCell, $(this)).each(function(i){
-                    if($(this).is(contains + '(' + filterString + ')')) {
-                        find_flag = true;
-                        g_find_flag = true;
-                    }
-                })
+
+                if ($(settings.filterCell, $(this)).length < 1){
+                    // skip table header
+                    find_flag = true;
+                }else{
+                    $(settings.filterCell, $(this)).each(function(i){
+                        if($(this).is(contains + '(' + filterString + ')')) {
+                            find_flag = true;
+                            g_find_flag = true;
+                        }
+                    })
+                }
                 if(find_flag) {
                     //check hidden rows for backspace operation
                     if($(this).is(':hidden')) {
